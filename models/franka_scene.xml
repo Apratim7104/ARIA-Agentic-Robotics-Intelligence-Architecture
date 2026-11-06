@@ -1,0 +1,140 @@
+<!--
+  Self-contained manipulation scene for the Spatial Reasoning Layer (Layer 2).
+
+  * 7-DOF Panda-like arm built from primitives (no external meshes) mounted on
+    a pedestal whose top is flush with the table surface (z = 0.40 m).
+  * Table with a 5 cm red target cube on a free joint.
+  * Fixed overhead camera "overhead_cam" matching config/default_config.yaml:
+      pos = [0.6, 0, 1.2], optical axis -Z (looking down)
+      fovy = 2*atan(120/250) => fx = fy = 250 px at 320x240
+    MuJoCo cameras look along their local -Z with +Y up, so the OpenCV
+    quaternion [0, 0.7071, 0.7071, 0] corresponds to xyaxes="0 1 0 -1 0 0".
+-->
+<mujoco model="franka_spatial_scene">
+  <compiler angle="radian" autolimits="true"/>
+  <option timestep="0.002" integrator="implicitfast" gravity="0 0 -9.81"/>
+
+  <visual>
+    <global offwidth="640" offheight="480" azimuth="150" elevation="-25"/>
+    <map znear="0.01" zfar="50"/>
+    <quality shadowsize="2048"/>
+    <headlight ambient="0.35 0.35 0.35" diffuse="0.6 0.6 0.6" specular="0.1 0.1 0.1"/>
+  </visual>
+
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.22 0.24 0.27" rgb2="0.28 0.30 0.33"
+             width="512" height="512"/>
+    <material name="floor_mat" texture="grid" texrepeat="6 6" reflectance="0.05"/>
+    <material name="table_mat" rgba="0.62 0.50 0.38 1"/>
+    <material name="link_white" rgba="0.92 0.92 0.94 1"/>
+    <material name="link_dark" rgba="0.18 0.18 0.20 1"/>
+    <material name="pedestal_mat" rgba="0.30 0.32 0.36 1"/>
+    <material name="block_red" rgba="0.90 0.10 0.10 1"/>
+  </asset>
+
+  <default>
+    <default class="arm">
+      <joint damping="2.0" armature="0.1"/>
+      <geom contype="0" conaffinity="0" material="link_white" group="1"/>
+      <position kp="400" kv="40"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <light name="key" pos="0.4 -0.6 2.0" dir="0 0.3 -1" diffuse="0.6 0.6 0.6" castshadow="true"/>
+    <geom name="floor" type="plane" size="3 3 0.05" material="floor_mat"/>
+
+    <!-- Pedestal (top at z = 0.40) -->
+    <geom name="pedestal" type="cylinder" size="0.09 0.2" pos="0 0 0.2" material="pedestal_mat"/>
+
+    <!-- Table: top surface at z = 0.40, spans x in [0.2, 1.0], y in [-0.55, 0.55] -->
+    <body name="table" pos="0.6 0 0">
+      <geom name="table_top" type="box" size="0.4 0.55 0.02" pos="0 0 0.38" material="table_mat"/>
+      <geom name="leg1" type="box" size="0.02 0.02 0.18" pos="0.36 0.51 0.18" material="table_mat"/>
+      <geom name="leg2" type="box" size="0.02 0.02 0.18" pos="-0.36 0.51 0.18" material="table_mat"/>
+      <geom name="leg3" type="box" size="0.02 0.02 0.18" pos="0.36 -0.51 0.18" material="table_mat"/>
+      <geom name="leg4" type="box" size="0.02 0.02 0.18" pos="-0.36 -0.51 0.18" material="table_mat"/>
+    </body>
+
+    <!-- Fixed overhead RGB-D camera -->
+    <camera name="overhead_cam" mode="fixed" pos="0.6 0 1.2" xyaxes="0 1 0 -1 0 0" fovy="51.28201"/>
+
+    <!-- 7-DOF Panda-like arm (Panda link offsets, primitive geometry) -->
+    <body name="link0" pos="0 0 0.4" childclass="arm">
+      <geom type="cylinder" size="0.07 0.04" pos="0 0 0.04" material="link_dark"/>
+      <body name="link1" pos="0 0 0.333" gravcomp="1">
+        <inertial pos="0 0 -0.1" mass="3.0" diaginertia="0.03 0.03 0.01"/>
+        <joint name="joint1" axis="0 0 1" range="-2.8973 2.8973"/>
+        <geom type="capsule" size="0.06" fromto="0 0 -0.29 0 0 -0.02"/>
+        <body name="link2" pos="0 0 0" gravcomp="1">
+          <inertial pos="0 0 0.1" mass="3.0" diaginertia="0.03 0.03 0.01"/>
+          <joint name="joint2" axis="0 1 0" range="-1.7628 1.7628"/>
+          <geom type="capsule" size="0.06" fromto="0 -0.06 0 0 0.06 0" material="link_dark"/>
+          <geom type="capsule" size="0.055" fromto="0 0 0 0 0 0.2"/>
+          <body name="link3" pos="0 0 0.316" gravcomp="1">
+            <inertial pos="0.04 0 -0.05" mass="2.5" diaginertia="0.02 0.02 0.01"/>
+            <joint name="joint3" axis="0 0 1" range="-2.8973 2.8973"/>
+            <geom type="capsule" size="0.055" fromto="0 0 -0.12 0 0 0"/>
+            <geom type="capsule" size="0.05" fromto="0 0 0 0.0825 0 0"/>
+            <body name="link4" pos="0.0825 0 0" gravcomp="1">
+              <inertial pos="-0.04 0 0.1" mass="2.5" diaginertia="0.02 0.02 0.01"/>
+              <joint name="joint4" axis="0 -1 0" range="-3.0718 -0.0698"/>
+              <geom type="capsule" size="0.055" fromto="0 -0.055 0 0 0.055 0" material="link_dark"/>
+              <geom type="capsule" size="0.05" fromto="0 0 0 -0.0825 0 0.1"/>
+              <body name="link5" pos="-0.0825 0 0.384" gravcomp="1">
+                <inertial pos="0 0 -0.1" mass="2.0" diaginertia="0.02 0.02 0.005"/>
+                <joint name="joint5" axis="0 0 1" range="-2.8973 2.8973"/>
+                <geom type="capsule" size="0.045" fromto="0 0 -0.284 0 0 -0.02"/>
+                <body name="link6" pos="0 0 0" gravcomp="1">
+                  <inertial pos="0.04 0 0" mass="1.5" diaginertia="0.01 0.01 0.005"/>
+                  <joint name="joint6" axis="0 -1 0" range="-0.0175 3.7525"/>
+                  <geom type="capsule" size="0.05" fromto="0 -0.05 0 0 0.05 0" material="link_dark"/>
+                  <geom type="capsule" size="0.04" fromto="0 0 0 0.088 0 0"/>
+                  <body name="link7" pos="0.088 0 0" gravcomp="1">
+                    <inertial pos="0 0 -0.08" mass="0.8" diaginertia="0.005 0.005 0.003"/>
+                    <joint name="joint7" axis="0 0 1" range="-2.8973 2.8973"/>
+                    <geom type="cylinder" size="0.045 0.03" pos="0 0 -0.03" material="link_dark"/>
+                    <!-- Tool centre point (between fingertips) -->
+                    <body name="ee_link" pos="0 0 -0.2104" gravcomp="1">
+                      <inertial pos="0 0 0.08" mass="0.7" diaginertia="0.003 0.003 0.002"/>
+                      <geom name="hand" type="box" size="0.03 0.1 0.025" pos="0 0 0.1104"/>
+                      <geom name="finger_l" type="box" size="0.01 0.012 0.03" pos="0 0.03 0.03"
+                            material="link_dark"/>
+                      <geom name="finger_r" type="box" size="0.01 0.012 0.03" pos="0 -0.03 0.03"
+                            material="link_dark"/>
+                      <site name="tcp" pos="0 0 0" size="0.008" rgba="0 1 0 1"/>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <!-- Target object: 5 cm red cube resting on the table -->
+    <body name="target_block" pos="0.5 0.0 0.425">
+      <freejoint name="target_free"/>
+      <geom name="target_geom" type="box" size="0.025 0.025 0.025" material="block_red"
+            mass="0.1" friction="1.0 0.01 0.001"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position name="act1" joint="joint1" class="arm" ctrlrange="-2.8973 2.8973"/>
+    <position name="act2" joint="joint2" class="arm" ctrlrange="-1.7628 1.7628"/>
+    <position name="act3" joint="joint3" class="arm" ctrlrange="-2.8973 2.8973"/>
+    <position name="act4" joint="joint4" class="arm" ctrlrange="-3.0718 -0.0698"/>
+    <position name="act5" joint="joint5" class="arm" ctrlrange="-2.8973 2.8973"/>
+    <position name="act6" joint="joint6" class="arm" ctrlrange="-0.0175 3.7525"/>
+    <position name="act7" joint="joint7" class="arm" ctrlrange="-2.8973 2.8973"/>
+  </actuator>
+
+  <keyframe>
+    <key name="home"
+         qpos="0 -0.3 0 -2.2 0 1.9 0   0.5 0 0.425 1 0 0 0"
+         ctrl="0 -0.3 0 -2.2 0 1.9 0"/>
+  </keyframe>
+</mujoco>
+

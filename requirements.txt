@@ -1,0 +1,37 @@
+# ==============================================================================
+# ARIA: Autonomous Robotic Manipulation System
+# Complete Dependencies Specification
+# Install: pip install -r requirements.txt
+# ==============================================================================
+
+# Core Simulation, Robotics & Optimal Control (Layers 2, 3, 4)
+mujoco>=3.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+casadi>=3.6.0
+torch>=2.0.0
+PyYAML>=6.0
+Pillow>=9.0.0
+matplotlib>=3.7.0
+reportlab>=4.0.0
+
+# Multi-Agent Orchestrator & LLM Planning (Layer 1)
+langgraph>=0.2.0
+langchain>=0.2.0
+langchain-openai>=0.1.0
+langchain-core>=0.2.0
+openai>=1.30.0
+python-dotenv>=1.0.0
+pandas>=2.0.0
+openpyxl>=3.1.0
+tavily-python>=0.3.0
+colorlog>=6.8.0
+
+# Testing & Continuous Integration
+pytest>=7.0.0
+pytest-asyncio>=0.23.0
+
+# Optional: Full Neural Vision & SAM2 Segmentation (Production Hardware Mode)
+# ultralytics>=8.0.0
+# transformers>=4.40.0
+# opencv-python>=4.8.0

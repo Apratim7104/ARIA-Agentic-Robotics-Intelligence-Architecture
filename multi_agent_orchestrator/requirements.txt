@@ -1,0 +1,37 @@
+# ─────────────────────────────────────────────────────────────
+# requirements.txt — Multi-Agent Orchestrator Dependencies
+# Install with: pip install -r requirements.txt
+# ─────────────────────────────────────────────────────────────
+
+# ── 🧠 LangGraph & LangChain (Core orchestration) ─────────────
+langgraph>=0.2.0
+langchain>=0.2.0
+langchain-openai>=0.1.0
+langchain-core>=0.2.0
+
+# ── 🤖 OpenAI (Siemens LLM endpoint is OpenAI-compatible) ─────
+openai>=1.30.0
+
+# ── 🌐 Tavily (Web search for research_agent) ─────────────────
+tavily-python>=0.3.0
+
+# ── 👁 Google Gemini (Vision agent) ──────────────────────────
+google-generativeai>=0.7.0
+
+# ── 📊 Excel handling (excel_tool) ────────────────────────────
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# ── 🔌 MCP Server ─────────────────────────────────────────────
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# ── ⚙ Environment & Config ──────────────────────────────────
+python-dotenv>=1.0.0
+
+# ── 🎨 Logging & Utilities ────────────────────────────────────
+colorlog>=6.8.0
+
+# ── 🧪 Dev & Testing (optional) ───────────────────────────────
+pytest>=8.0.0
+pytest-asyncio>=0.23.0

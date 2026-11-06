@@ -1,0 +1,74 @@
+# =============================================================================
+# Spatial Reasoning Layer (Layer 2) - default operating constants
+# =============================================================================
+
+camera:
+  name: overhead_cam
+  intrinsics:
+    width: 320
+    height: 240
+    fx: 250.0
+    fy: 250.0
+    cx: 160.0
+    cy: 120.0
+    # Brown-Conrady [k1, k2, p1, p2, k3]
+    distortion: [0.0, 0.0, 0.0, 0.0, 0.0]
+  extrinsics:
+    # Camera-to-world pose. The rotation uses the OpenCV optical convention
+    # (+x right, +y down, +z forward along the optical axis), quaternion in
+    # MuJoCo order [w, x, y, z]. This quaternion points the optical axis at -Z
+    # (straight down at the table).
+    pos: [0.6, 0.0, 1.2]
+    quat: [0.0, 0.7071, 0.7071, 0.0]
+
+robot:
+  base_body: link0
+  ee_body: ee_link
+  arm_joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+
+workspace:
+  # Radial reach envelope measured from the robot base origin (meters)
+  reach_min: 0.15
+  reach_max: 0.85
+  table_height: 0.40
+  collision_clearance: 0.06   # min clearance between grasp point and other objects (m)
+
+ik:
+  max_iterations: 5
+  time_budget_ms: 0.8
+  damping: 0.05               # initial Levenberg-Marquardt damping (lambda)
+  tolerance: 0.01             # position error accepted as feasible (m)
+  max_step: 0.5               # max joint update norm per iteration (rad)
+
+grasp:
+  default_offset: [0.0, 0.0, 0.02]   # top-down offset from centroid (m)
+
+normalization:
+  pos_scale: 2.0
+  dist_scale: 1.5
+  grasp_scale: 0.5
+
+tracking:
+  confidence_threshold: 0.70
+  tracking_distance_threshold: 40.0  # pixels
+  max_tracked_objects: 5
+  max_missed_frames: 5
+
+depth:
+  cache_interval_ms: 5.0
+  patch_radius: 1          # (2r+1)^2 median window around the bbox centre
+  min_valid_depth: 0.05
+  max_valid_depth: 10.0
+
+# Known object dimensions (full extents, meters). Used to shift the observed
+# surface depth to the object centroid (half-extent along the optical axis).
+object_classes:
+  cube:
+    size: [0.05, 0.05, 0.05]
+  default:
+    size: [0.0, 0.0, 0.0]
+
+pipeline:
+  inbound_queue_size: 2
+  feature_dim: 30
+

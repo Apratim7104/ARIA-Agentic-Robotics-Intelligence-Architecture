@@ -1,0 +1,19 @@
+system:
+  state_dim: 6            # e.g., [x, y, z, vx, vy, vz]
+  action_dim: 4           # e.g., [vx_cmd, vy_cmd, vz_cmd, yaw_rate]
+  context_dim: 5          # e.g., [fragility, speed_pri, safety_pri, task_code, crowd_density]
+  physical_dim: 3         # e.g., [mass, friction, target_dist]
+  residual_dim: 6         # Match state dimension
+
+architecture:
+  state_encoder_dims: [128, 64]
+  context_encoder_dims: [64, 32]
+  physical_encoder_dims: [64, 32]
+  fusion_dims: [128, 128]
+
+training:
+  batch_size: 64
+  learning_rate: 0.001
+  epochs: 100
+  seed: 42
+
