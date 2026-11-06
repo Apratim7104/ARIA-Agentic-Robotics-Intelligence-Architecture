@@ -1,6 +1,7 @@
 # ARIA: Autonomous Robotic Manipulation System
 ### Multi-Agent Planning, Spatial Reasoning, Context-Conditioned Dynamics & Franka 7-DOF NMPC
 
+[![CI](https://github.com/Apratim7104/ARIA-Agentic-Robotics-Intelligence-Architecture/actions/workflows/ci.yml/badge.svg)](https://github.com/Apratim7104/ARIA-Agentic-Robotics-Intelligence-Architecture/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![MuJoCo 3.0+](https://img.shields.io/badge/physics-MuJoCo%203.1+-red.svg)](https://mujoco.org/)
 [![CasADi 3.6+](https://img.shields.io/badge/optimization-CasADi%20%2B%20IPOPT-orange.svg)](https://web.casadi.org/)
